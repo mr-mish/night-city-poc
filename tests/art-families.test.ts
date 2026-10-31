@@ -58,3 +58,31 @@ describe('building atlases', () => {
     expect([...core.get('window_dark_0')!.emissive[0]!.data].every((v) => v === 0)).toBe(true);
   });
 });
+
+describe('props atlas', () => {
+  const p = byName(atlasSources().props ?? []);
+  it('has every prop at spec size', () => {
+    expectAsset(p, 'streetlight', 16, 48);
+    expectAsset(p, 'streetlight_double', 32, 48);
+    expectAsset(p, 'traffic_light', 16, 48);
+    expectAsset(p, 'vending_machine', 16, 32);
+    expectAsset(p, 'data_terminal', 16, 32);
+    expectAsset(p, 'bench', 32, 16);
+    expectAsset(p, 'hydrant', 16, 16);
+    expectAsset(p, 'dumpster', 32, 24);
+    expectAsset(p, 'trash_bags', 16, 16);
+    expectAsset(p, 'traffic_cone', 16, 16);
+    expectAsset(p, 'barrier', 32, 16);
+    expectAsset(p, 'bollard', 16, 16);
+    for (const i of [0, 1, 2]) expectAsset(p, `container_${i}`, 48, 24);
+  });
+  it('neon signs flicker (2 frames) and holo-ads loop (4 frames)', () => {
+    for (let i = 0; i < 6; i++) expectAsset(p, `neon_sign_${i}`, p.get(`neon_sign_${i}`)!.frames[0]!.w, p.get(`neon_sign_${i}`)!.frames[0]!.h, 2);
+    for (let i = 0; i < 3; i++) expectAsset(p, `holo_ad_${i}`, 32, 32, 4);
+  });
+  it('light sources have emissive pixels', () => {
+    for (const n of ['streetlight', 'traffic_light', 'vending_machine', 'neon_sign_0', 'holo_ad_0']) {
+      expect([...p.get(n)!.emissive[0]!.data].some((v) => v !== 0), n).toBe(true);
+    }
+  });
+});

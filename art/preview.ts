@@ -3,6 +3,8 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { PixelCanvas } from './lib/pixels.ts';
 import { canvasToPng } from './lib/atlas.ts';
+import { encodePng } from './lib/png.ts';
+import { rgbaOf } from './palette.ts';
 import { atlasSources } from './build.ts';
 import type { AssetDef } from './lib/asset.ts';
 
@@ -87,7 +89,44 @@ export function buildingRow(): PixelCanvas {
   return c;
 }
 
+/** Night composite: albedo dimmed toward deep blue, emissive added on top. */
+function nightPng(albedo: PixelCanvas, emissive: PixelCanvas, s: number): Buffer {
+  const w = albedo.w * s, h = albedo.h * s;
+  const rgba = new Uint8Array(w * h * 4);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const sx = Math.floor(x / s), sy = Math.floor(y / s);
+    const a = rgbaOf(albedo.get(sx, sy)), e = rgbaOf(emissive.get(sx, sy));
+    const k = (y * w + x) * 4;
+    if (a[3] === 0) { rgba.set([13, 11, 30, 255], k); continue; }
+    rgba[k] = Math.min(255, a[0] * 0.38 + 7 + e[0]);
+    rgba[k + 1] = Math.min(255, a[1] * 0.38 + 5 + e[1]);
+    rgba[k + 2] = Math.min(255, a[2] * 0.38 + 25 + e[2]);
+    rgba[k + 3] = 255;
+  }
+  return encodePng(w, h, rgba);
+}
+
+/** All props (first frame, plus extra animation frames) laid out on a sidewalk strip. */
+export function propSheet(): { albedo: PixelCanvas; emissive: PixelCanvas } {
+  const props = sources.props ?? [];
+  const items = props.flatMap((d) => d.frames.map((f, i) => ({ f, e: d.emissive[i] as PixelCanvas })));
+  const W = 400;
+  const albedo = new PixelCanvas(W, 180), emissive = new PixelCanvas(W, 180);
+  for (let y = 0; y < 180; y += 16) for (let x = 0; x < W; x += 16) albedo.blit(frame('sidewalk_0'), x, y);
+  let x = 4, base = 56;
+  for (const it of items) {
+    if (x + it.f.w > W - 4) { x = 4; base += 60; }
+    albedo.blit(it.f, x, base - it.f.h);
+    emissive.blit(it.e, x, base - it.f.h);
+    x += it.f.w + 4;
+  }
+  return { albedo, emissive };
+}
+
 mkdirSync(out, { recursive: true });
+const ps = propSheet();
+writeFileSync(join(out, 'props.png'), canvasToPng(upscale(ps.albedo, 3)));
+writeFileSync(join(out, 'props-night.png'), nightPng(ps.albedo, ps.emissive, 3));
 writeFileSync(join(out, 'buildings.png'), canvasToPng(upscale(buildingRow(), 3)));
 writeFileSync(join(out, 'street.png'), canvasToPng(upscale(streetScene(), SCALE)));
 const tileNames = (atlasSources().tiles ?? []).map((d) => d.name).filter((n) => !n.startsWith('curb_') && !n.includes('arrow') && n !== 'manhole' && n !== 'grate');
