@@ -29,3 +29,32 @@ describe('tiles atlas', () => {
     expect(t.get('water')!.fps).toBeGreaterThan(0);
   });
 });
+
+describe('building atlases', () => {
+  const names = [
+    'wall_0', 'wall_1', 'window_lit_0', 'window_lit_1', 'window_lit_2', 'window_dark_0', 'window_dark_1', 'window_dark_2',
+    'store_shutter', 'store_open', 'door', 'ac_unit', 'pipes', 'balcony', 'base_trim',
+    'roof_0', 'roof_1', 'parapet_n', 'parapet_e', 'parapet_s', 'parapet_w',
+    'parapet_corner_ne', 'parapet_corner_nw', 'parapet_corner_se', 'parapet_corner_sw',
+    'vent', 'water_tank', 'antenna', 'helipad', 'billboard_mount',
+  ];
+  for (const d of ['core', 'lumen', 'iron', 'under']) {
+    it(`${d} has the full 16x16 kit`, () => {
+      const b = byName(atlasSources()[`buildings_${d}`] ?? []);
+      for (const n of names) expectAsset(b, n, 16, 16);
+    });
+  }
+  it('districts differ only by palette remap', () => {
+    const core = byName(atlasSources().buildings_core!);
+    const lumen = byName(atlasSources().buildings_lumen!);
+    const a = core.get('window_lit_0')!.frames[0]!;
+    const b = lumen.get('window_lit_0')!.frames[0]!;
+    expect([...a.data].map((v) => v !== 0)).toEqual([...b.data].map((v) => v !== 0));
+    expect([...a.data]).not.toEqual([...b.data]);
+  });
+  it('lit windows glow, dark windows do not', () => {
+    const core = byName(atlasSources().buildings_core!);
+    expect([...core.get('window_lit_0')!.emissive[0]!.data].some((v) => v !== 0)).toBe(true);
+    expect([...core.get('window_dark_0')!.emissive[0]!.data].every((v) => v === 0)).toBe(true);
+  });
+});

@@ -4,6 +4,8 @@ import { pathToFileURL } from 'node:url';
 import { packAtlas, canvasToPng, type AtlasMeta } from './lib/atlas.ts';
 import type { AssetDef } from './lib/asset.ts';
 import { tileAssets } from './tiles/index.ts';
+import { buildingAssets } from './buildings/index.ts';
+import { DISTRICTS } from './palette.ts';
 
 export const OUT_DIR = 'public/assets';
 
@@ -11,6 +13,7 @@ export const OUT_DIR = 'public/assets';
 export function atlasSources(): Record<string, AssetDef[]> {
   const out: Record<string, AssetDef[]> = {};
   out.tiles = tileAssets();
+  for (const d of DISTRICTS) out[`buildings_${d}`] = buildingAssets(d);
   return out;
 }
 

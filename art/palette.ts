@@ -43,9 +43,9 @@ export const DISTRICTS: District[] = ['core', 'lumen', 'iron', 'under'];
 /** Building kits are authored with walls in m0..m3 and accents in k0..k3 (Meridian Core). */
 export const DISTRICT_REMAP: Record<District, Record<number, number>> = {
   core: {},
-  lumen: { ...zipRemap(['m0', 'm1', 'm2', 'm3'], ['n2', 'n3', 'n4', 'n5']), ...zipRemap(['k0', 'k1', 'k2', 'k3'], ['p0', 'p1', 'p2', 'p3']) },
-  iron: { ...zipRemap(['m0', 'm1', 'm2', 'm3'], ['r0', 'r1', 'r2', 'r3']), ...zipRemap(['k0', 'k1', 'k2', 'k3'], ['i0', 'i1', 'i2', 'i3']) },
-  under: { ...zipRemap(['m0', 'm1', 'm2', 'm3'], ['n3', 'c0', 'c1', 'c2']), ...zipRemap(['k0', 'k1', 'k2', 'k3'], ['u0', 'u1', 'u1', 'u2']) },
+  lumen: { ...zipRemap(['m0', 'm1', 'm2', 'm3'], ['n2', 'n3', 'n4', 'p3']), ...zipRemap(['k0', 'k1', 'k2', 'k3'], ['p0', 'p1', 'p2', 'p3']) },
+  iron: { ...zipRemap(['m0', 'm1', 'm2', 'm3'], ['r0', 'r1', 'r2', 'c1']), ...zipRemap(['k0', 'k1', 'k2', 'k3'], ['i0', 'i1', 'i2', 'i3']) },
+  under: { ...zipRemap(['m0', 'm1', 'm2', 'm3'], ['n2', 'n3', 'c0', 'c1']), ...zipRemap(['k0', 'k1', 'k2', 'k3'], ['u0', 'u1', 'u1', 'u2']) },
 };
 
 export type VehicleVariant = 'a' | 'b' | 'c';
