@@ -7,6 +7,7 @@ import { tileAssets } from './tiles/index.ts';
 import { buildingAssets } from './buildings/index.ts';
 import { DISTRICTS } from './palette.ts';
 import { propAssets } from './props/index.ts';
+import { vehicleAssets } from './vehicles/index.ts';
 
 export const OUT_DIR = 'public/assets';
 
@@ -16,6 +17,7 @@ export function atlasSources(): Record<string, AssetDef[]> {
   out.tiles = tileAssets();
   for (const d of DISTRICTS) out[`buildings_${d}`] = buildingAssets(d);
   out.props = propAssets();
+  out.vehicles = vehicleAssets();
   return out;
 }
 

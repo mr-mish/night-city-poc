@@ -86,3 +86,24 @@ describe('props atlas', () => {
     }
   });
 });
+
+describe('vehicles atlas', () => {
+  const v = byName(atlasSources().vehicles ?? []);
+  const sizes: Record<string, [number, number]> = { compact: [64, 64], muscle: [64, 64], van: [96, 64], hoverbike: [64, 32] };
+  const parts = ['roof', 'hood', 'trunk', 'side_l', 'side_r', 'front', 'rear', 'wheel'];
+  for (const [model, [w, h]] of Object.entries(sizes)) {
+    for (const variant of ['a', 'b', 'c']) {
+      it(`${model}_${variant} has its skin and UV parts`, () => {
+        expectAsset(v, `${model}_${variant}`, w, h);
+        const d = v.get(`${model}_${variant}`)!;
+        for (const part of parts) {
+          const r = d.parts?.[part];
+          expect(r, `${model} ${part}`).toBeDefined();
+          expect(r!.x + r!.w).toBeLessThanOrEqual(w);
+          expect(r!.y + r!.h).toBeLessThanOrEqual(h);
+        }
+        expect([...d.emissive[0]!.data].some((x) => x !== 0), 'lights glow').toBe(true);
+      });
+    }
+  }
+});

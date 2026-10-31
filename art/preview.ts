@@ -123,7 +123,22 @@ export function propSheet(): { albedo: PixelCanvas; emissive: PixelCanvas } {
   return { albedo, emissive };
 }
 
+/** All vehicle skins in a grid. */
+export function vehicleSheet(): { albedo: PixelCanvas; emissive: PixelCanvas } {
+  const defs = sources.vehicles ?? [];
+  const albedo = new PixelCanvas(3 * 100, Math.ceil(defs.length / 3) * 68), emissive = new PixelCanvas(albedo.w, albedo.h);
+  defs.forEach((d, i) => {
+    const x = (i % 3) * 100 + 2, y = Math.floor(i / 3) * 68 + 2;
+    albedo.blit(d.frames[0]!, x, y);
+    emissive.blit(d.emissive[0]!, x, y);
+  });
+  return { albedo, emissive };
+}
+
 mkdirSync(out, { recursive: true });
+const vs = vehicleSheet();
+writeFileSync(join(out, 'vehicles.png'), canvasToPng(upscale(vs.albedo, 3)));
+writeFileSync(join(out, 'vehicles-night.png'), nightPng(vs.albedo, vs.emissive, 3));
 const ps = propSheet();
 writeFileSync(join(out, 'props.png'), canvasToPng(upscale(ps.albedo, 3)));
 writeFileSync(join(out, 'props-night.png'), nightPng(ps.albedo, ps.emissive, 3));
