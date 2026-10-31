@@ -95,7 +95,7 @@ function makeBuilding(rng: Rng, lot: BuildingLot, roofMat: THREE.Material): THRE
     const emissiveMap = tex.emissive.clone();
     map.repeat.set(len / 4, lot.h / 8);
     emissiveMap.repeat.set(len / 4, lot.h / 8);
-    return new THREE.MeshLambertMaterial({ map, emissiveMap, emissive: 0xffffff, emissiveIntensity: 1.3 });
+    return new THREE.MeshLambertMaterial({ map, emissiveMap, emissive: 0xffffff, emissiveIntensity: 1.0 });
   };
   const sideD = side(lot.d);
   const sideW = side(lot.w);

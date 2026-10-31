@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 /** World units visible vertically on screen. */
-export const VIEW_HEIGHT = 24;
+export const VIEW_HEIGHT = 34;
 const OFFSET_DIST = 100;
 
 /** Snap `target` so its projection onto the camera's right/up axes lands on whole low-res pixels. */

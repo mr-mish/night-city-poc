@@ -4,10 +4,10 @@ import type { Rng } from '../core/rng';
 type Palette = { wall: string; lit: string[]; litChance: number };
 
 const FACADE_PALETTES: Palette[] = [
-  { wall: '#2a2f4a', lit: ['#9ff6ff', '#e6fbff', '#7fd8ff'], litChance: 0.45 },
-  { wall: '#3a2840', lit: ['#ff9ff0', '#ffd1f4', '#ff5ad6'], litChance: 0.4 },
-  { wall: '#1f3536', lit: ['#b6ffd9', '#fff2a8', '#7dffb0'], litChance: 0.35 },
-  { wall: '#33302c', lit: ['#ffcf7a', '#ffe9b8', '#ffa94d'], litChance: 0.3 },
+  { wall: '#3a4266', lit: ['#9ff6ff', '#e6fbff', '#7fd8ff'], litChance: 0.45 },
+  { wall: '#523a5a', lit: ['#ff9ff0', '#ffd1f4', '#ff5ad6'], litChance: 0.4 },
+  { wall: '#2c4b4c', lit: ['#b6ffd9', '#fff2a8', '#7dffb0'], litChance: 0.35 },
+  { wall: '#4a453f', lit: ['#ffcf7a', '#ffe9b8', '#ffa94d'], litChance: 0.3 },
 ];
 
 function canvas2d(w: number, h: number): { el: HTMLCanvasElement; ctx: CanvasRenderingContext2D } {

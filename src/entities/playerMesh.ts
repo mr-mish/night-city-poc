@@ -31,6 +31,26 @@ export class PlayerMesh {
     box(0.34, 0.34, 0.34, skin, 0, 1.68, 0);
     box(0.36, 0.12, 0.36, hair, 0, 1.88, 0);
     box(0.3, 0.07, 0.05, trim, 0, 1.7, 0.18); // visor faces +Z
+    this.addXraySilhouette();
+  }
+
+  /**
+   * Iso views hide the player behind buildings. Duplicate every part with a material that
+   * only draws where it is *behind* existing depth (GreaterDepth), giving a neon silhouette.
+   */
+  private addXraySilhouette(): void {
+    const xray = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(0.1, 1.4, 1.6),
+      transparent: true,
+      opacity: 0.6,
+      depthFunc: THREE.GreaterDepth,
+      depthWrite: false,
+    });
+    for (const part of [...this.group.children] as THREE.Mesh[]) {
+      const ghost = new THREE.Mesh(part.geometry, xray);
+      ghost.renderOrder = 10;
+      part.add(ghost);
+    }
   }
 
   update(p: PlayerState): void {

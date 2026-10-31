@@ -25,7 +25,7 @@ export class PixelRenderer {
 
     this.composer = new EffectComposer(this.renderer);
     this.composer.addPass(new RenderPass(scene, iso.camera));
-    this.composer.addPass(new UnrealBloomPass(new THREE.Vector2(1, 1), 0.9, 0.35, 0.72));
+    this.composer.addPass(new UnrealBloomPass(new THREE.Vector2(1, 1), 0.55, 0.2, 0.9));
     this.composer.addPass(new OutputPass());
 
     this.resize();
