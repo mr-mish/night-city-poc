@@ -1,0 +1,12 @@
+:root { --bg: #0d0b1e; --panel: #1c1838; --text: #e8f6ff; --accent: #3fe0f0; }
+html, body { margin: 0; background: var(--bg); color: var(--text); font-family: ui-monospace, Menlo, Consolas, monospace; }
+.bar { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; gap: 16px; align-items: center;
+  padding: 10px 16px; background: var(--panel); border-bottom: 2px solid var(--accent); }
+.bar h1 { font-size: 14px; margin: 0 auto 0 0; letter-spacing: 2px; color: var(--accent); }
+main { padding: 16px; }
+h2 { font-size: 13px; letter-spacing: 1px; color: #ff3fc0; margin: 24px 0 8px; }
+.grid { display: flex; flex-wrap: wrap; gap: 12px; }
+.card { background: var(--panel); padding: 6px; border-radius: 4px; }
+.card canvas { display: block; image-rendering: pixelated;
+  background: repeating-conic-gradient(#2a2838 0 25%, #1f1d2b 0 50%) 0 0 / 16px 16px; }
+.card span { display: block; font-size: 10px; margin-top: 4px; opacity: 0.8; max-width: 200px; overflow-wrap: anywhere; }
