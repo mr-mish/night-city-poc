@@ -3,12 +3,14 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { packAtlas, canvasToPng, type AtlasMeta } from './lib/atlas.ts';
 import type { AssetDef } from './lib/asset.ts';
+import { tileAssets } from './tiles/index.ts';
 
 export const OUT_DIR = 'public/assets';
 
 /** Every atlas and its assets. Families register here. */
 export function atlasSources(): Record<string, AssetDef[]> {
   const out: Record<string, AssetDef[]> = {};
+  out.tiles = tileAssets();
   return out;
 }
 

@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.node.json",
     "test": "vitest run --passWithNoTests",
     "e2e": "vite build && node e2e/smoke.mjs",
-    "art": "node art/build.ts"
+    "art": "node art/build.ts",
+    "art:preview": "node art/preview.ts e2e/screenshots"
   },
   "dependencies": {
     "three": "0.187.0"
