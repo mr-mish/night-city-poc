@@ -3,7 +3,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import type { IsoCamera } from './camera';
+import type { ObliqueCamera } from './oblique';
 import { computeLowRes, type LowRes } from './lowres';
 
 /** Background colour in sRGB bytes, used by sampleNonBlank(). */
@@ -18,13 +18,13 @@ export class PixelRenderer {
   lowRes: LowRes = { width: 1, height: 1, scale: 1 };
   private readonly composer: EffectComposer;
 
-  constructor(container: HTMLElement, scene: THREE.Scene, private readonly iso: IsoCamera) {
+  constructor(container: HTMLElement, scene: THREE.Scene, private readonly cam: ObliqueCamera) {
     this.renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
     this.renderer.setPixelRatio(1);
     container.appendChild(this.renderer.domElement);
 
     this.composer = new EffectComposer(this.renderer);
-    this.composer.addPass(new RenderPass(scene, iso.camera));
+    this.composer.addPass(new RenderPass(scene, cam.camera));
     this.composer.addPass(new UnrealBloomPass(new THREE.Vector2(1, 1), 0.55, 0.2, 0.9));
     this.composer.addPass(new OutputPass());
 
@@ -41,7 +41,7 @@ export class PixelRenderer {
     canvas.style.height = `${lr.height * lr.scale}px`;
     this.composer.setPixelRatio(1);
     this.composer.setSize(lr.width, lr.height);
-    this.iso.resize(lr.width / lr.height, lr.height);
+    this.cam.resize(lr.width, lr.height);
   }
 
   render(): void {

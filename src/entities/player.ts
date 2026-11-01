@@ -1,4 +1,4 @@
-import { screenToWorldDir } from '../core/iso';
+import { inputToWorldDir } from '../core/dir';
 import type { InputState } from '../input/keyboard';
 import { resolveAgainstWorld, type SpatialHash } from '../physics/collision';
 
@@ -14,7 +14,7 @@ export function createPlayer(x = 0, z = 0): PlayerState {
 }
 
 export function updatePlayer(p: PlayerState, input: InputState, dt: number, world: SpatialHash): void {
-  const d = screenToWorldDir(input.moveX, input.moveY);
+  const d = inputToWorldDir(input.moveX, input.moveY);
   const len = Math.hypot(d.x, d.z);
   if (len > 0) {
     const speed = input.run ? RUN_SPEED : WALK_SPEED;
