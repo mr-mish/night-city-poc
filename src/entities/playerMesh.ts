@@ -6,8 +6,8 @@ const HEIGHT = 1.5;
 const MODEL_HEIGHT = 1.94;
 
 // Art Pack 1 palette.
-const JACKET = 0x2e2852; // o2
-const PANTS = 0x1c1838; // o1
+const JACKET = 0x566780; // m1
+const PANTS = 0x2e2852; // o2
 const SKIN = 0xc48a66; // s1
 const OUTLINE = 0x0d0b1e; // o0
 
@@ -51,22 +51,23 @@ export class PlayerMesh {
     this.group.add(this.body);
   }
 
-  /** Back-face hull for a crisp dark outline, plus an x-ray ghost drawn only where occluded. */
+  /**
+   * Back-face hull for a crisp dark outline, plus an x-ray ghost shown only where the *world* hides
+   * the player. Render order matters: world (0) → ghost (1, GreaterDepth, no depth write) → body (2).
+   * Drawing the ghost before the body keeps the body's own overlapping parts (heavy in the oblique
+   * view) from triggering it; the body then paints over the ghost wherever it is visible.
+   */
   private addOutlineAndXray(): void {
     const outline = new THREE.MeshBasicMaterial({ color: OUTLINE, side: THREE.BackSide });
-    const xray = new THREE.MeshBasicMaterial({
-      color: new THREE.Color(0.1, 1.4, 1.6),
-      transparent: true,
-      opacity: 0.6,
-      depthFunc: THREE.GreaterDepth,
-      depthWrite: false,
-    });
+    const xray = new THREE.MeshBasicMaterial({ color: new THREE.Color(0.08, 0.75, 0.85), depthFunc: THREE.GreaterDepth, depthWrite: false });
     for (const part of [...this.body.children] as THREE.Mesh[]) {
+      part.renderOrder = 2;
       const hull = new THREE.Mesh(part.geometry, outline);
       hull.scale.setScalar(1.18);
+      hull.renderOrder = 2;
       part.add(hull);
       const ghost = new THREE.Mesh(part.geometry, xray);
-      ghost.renderOrder = 10;
+      ghost.renderOrder = 1;
       part.add(ghost);
     }
   }

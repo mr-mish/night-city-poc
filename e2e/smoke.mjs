@@ -36,7 +36,7 @@ try {
   if (moved < 0.5) fail(`player did not move (${moved})`);
 
   mkdirSync('e2e/screenshots', { recursive: true });
-  await page.screenshot({ path: 'e2e/screenshots/m1-foundation.png' });
+  await page.screenshot({ path: 'e2e/screenshots/game.png' });
   if (errors.length) fail(`console errors:\n${errors.join('\n')}`);
 } catch (e) {
   fail(e instanceof Error ? e.stack : String(e));
