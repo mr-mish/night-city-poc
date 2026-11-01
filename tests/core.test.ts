@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createRng } from '../src/core/rng';
-import { screenToWorldDir } from '../src/core/iso';
+import { inputToWorldDir } from '../src/core/dir';
 import { createFixedStepper } from '../src/core/loop';
 
 describe('createRng', () => {
@@ -27,19 +27,11 @@ describe('createRng', () => {
   });
 });
 
-describe('screenToWorldDir', () => {
-  it('maps screen-up to world (-x,-z)', () => {
-    const d = screenToWorldDir(0, 1);
-    expect(d.x).toBeCloseTo(-Math.SQRT1_2);
-    expect(d.z).toBeCloseTo(-Math.SQRT1_2);
-  });
-  it('maps screen-right to world (+x,-z)', () => {
-    const d = screenToWorldDir(1, 0);
-    expect(d.x).toBeCloseTo(Math.SQRT1_2);
-    expect(d.z).toBeCloseTo(-Math.SQRT1_2);
-  });
-  it('returns zero for no input', () => {
-    expect(screenToWorldDir(0, 0)).toEqual({ x: 0, z: 0 });
+describe('inputToWorldDir', () => {
+  it('maps up to north (-z) and right to east (+x)', () => {
+    expect(inputToWorldDir(0, 1)).toEqual({ x: 0, z: -1 });
+    expect(inputToWorldDir(1, 0)).toEqual({ x: 1, z: 0 });
+    expect(inputToWorldDir(0, 0)).toEqual({ x: 0, z: 0 });
   });
 });
 
