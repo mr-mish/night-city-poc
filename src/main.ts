@@ -5,10 +5,12 @@ import { Keyboard } from './input/keyboard';
 import { SpatialHash } from './physics/collision';
 import { createPlayer, updatePlayer, type PlayerState } from './entities/player';
 import { PlayerMesh } from './entities/playerMesh';
-import { IsoCamera } from './render/camera';
+import { ObliqueCamera } from './render/oblique';
 import { PixelRenderer } from './render/renderer';
 import { setupNightLighting } from './render/lighting';
-import { buildTestBlock } from './world/testblock';
+import { buildWorld } from './render/worldMeshes';
+import { loadAtlases } from './assets/atlas';
+import { parseShowcase } from './world/showcase/parse';
 
 declare global {
   interface Window {
@@ -30,23 +32,25 @@ function hasWebGL2(): boolean {
   }
 }
 
-function start(): void {
+async function start(): Promise<void> {
   const app = document.getElementById('app')!;
   const scene = new THREE.Scene();
   setupNightLighting(scene);
 
-  const block = buildTestBlock();
-  scene.add(block.group);
-  const world = new SpatialHash(8);
-  for (const c of block.colliders) world.insert(c);
+  const [atlases, world] = await Promise.all([loadAtlases(), Promise.resolve(parseShowcase())]);
+  const built = buildWorld(world, atlases);
+  scene.add(built.group);
 
-  const player = createPlayer(block.spawn.x, block.spawn.z);
+  const collision = new SpatialHash(8);
+  for (const c of world.colliders) collision.insert(c);
+
+  const player = createPlayer(world.spawn.x, world.spawn.z);
   const playerMesh = new PlayerMesh();
   scene.add(playerMesh.group);
 
-  const iso = new IsoCamera();
-  iso.jumpTo(player.x, player.z);
-  const pixels = new PixelRenderer(app, scene, iso);
+  const cam = new ObliqueCamera();
+  cam.jumpTo(player.x, player.z);
+  const pixels = new PixelRenderer(app, scene, cam);
 
   const hint = document.createElement('div');
   hint.className = 'hint';
@@ -69,10 +73,11 @@ function start(): void {
     const dt = Math.min(0.25, (now - last) / 1000);
     last = now;
     const input = keyboard.read();
-    stepper.advance(dt, (step) => updatePlayer(player, input, step, world));
+    stepper.advance(dt, (step) => updatePlayer(player, input, step, collision));
     playerMesh.update(player);
-    iso.follow(player.x, player.z, dt);
-    iso.apply();
+    built.animate(now / 1000);
+    cam.follow(player.x, player.z, dt);
+    cam.apply();
     pixels.render();
     requestAnimationFrame(frame);
   };
@@ -82,7 +87,10 @@ function start(): void {
 }
 
 if (hasWebGL2()) {
-  start();
+  start().catch((e: unknown) => {
+    console.error(e);
+    showOverlay(`<div>Failed to load assets.<br /><small>${String(e instanceof Error ? e.message : e)}</small></div>`);
+  });
 } else {
   showOverlay('<div>Neo Meridian needs WebGL2.<br />Try a recent Chrome, Edge, Firefox or Safari.</div>');
 }
